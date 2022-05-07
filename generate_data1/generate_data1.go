@@ -14,7 +14,7 @@ func Generatedata() *cobra.Command {
 			startTime = 1643644800                     //  2022.2.1 0:00
 			endTime = 1656086400                       //   2022.6.25 0:00
 			step = 60                                  // per 60s
-			number = 90
+			number = 1
 			for i := startTime; i <= endTime; i = i + step {
 				pkg.OutputData(step, i, number)
 			}
