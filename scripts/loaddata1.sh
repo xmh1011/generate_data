@@ -1,31 +1,34 @@
 #!/bin/bash
 
-# Ensure loader is available
-EXE_FILE_NAME=${EXE_FILE_NAME:-$(which load_cnosdb)}
-if [[ -z "$EXE_FILE_NAME" ]]; then
-    echo "load_cnosdb not available. It is not specified explicitly and not found in \$PATH"
-    exit 1
-fi
-
-# Load parameters - common
-DATA_FILE_NAME=${DATA_FILE_NAME:-Xinao_test1.txt}
+START_TIME=${START_TIME:-1577808000}
+FIANL_TIME=${FINAL_TIME:-1640966400}
+STEP_TIME=${STEP_TIME:-60}
 DATABASE_PORT=${DATABASE_PORT:-8086}
+while true
+do
+#generate data
+EXE_FILE_NAME_1=${EXE_FILE_NAME_1:-$(which generate_data)}
+# shellcheck disable=SC1072
+$EXE_FILE_NAME_1
 
-EXE_DIR=${EXE_DIR:-$(dirname $0)}
-source ${EXE_DIR}/load_common.sh
+EXE_FILE_NAME_2=${EXE_FILE_NAME_2:-$(which load_influx)}
 
-until curl http://${DATABASE_HOST}:${DATABASE_PORT}/ping 2>/dev/null; do
-    echo "Waiting for CnosDB"
-    sleep 1
+
+# Load parameters
+BATCH_SIZE=${BATCH_SIZE:-10000}
+NUM_WORKERS=${NUM_WORKERS:-8}
+BACKOFF_SECS=${BACKOFF_SECS:-1s}
+REPORTING_PERIOD=${REPORTING_PERIOD:-10s}
+DO_ABORT_ON_EXIST=${DO_ABORT_ON_EXIST:-false}
+DO_CREATE_DB=${DO_CREATE_DB:-false}
+
+$EXE_FILE_NAME_1  generatedata3 --startTime=${START_TIME} --endTime=$((START_TIME+STEP_TIME)) | $EXE_FILE_NAME_2 \
+                                                                                            --do-create-db=${DO_CREATE_DB} \
+                                                                                            --do-abort-on-exist=${DO_ABORT_ON_EXIST} \
+                                                                                            --backoff=${BACKOFF_SECS} \
+                                                                                            --workers=${NUM_WORKERS} \
+                                                                                            --batch-size=${BATCH_SIZE} \
+                                                                                            --reporting-period=${REPORTING_PERIOD} \
+START_TIME=$((START_TIME+STEP_TIME))
+sleep 5
 done
-
-# Remove previous database
-curl -X POST http://${DATABASE_HOST}:${DATABASE_PORT}/query?q=drop%20database%20${DATABASE_NAME}
-# Load new data
-cat ${DATA_FILE} | gunzip | $EXE_FILE_NAME \
-                                --db-name=${DATABASE_NAME} \
-                                --backoff=${BACKOFF_SECS} \
-                                --workers=${NUM_WORKERS} \
-                                --batch-size=${BATCH_SIZE} \
-                                --reporting-period=${REPORTING_PERIOD} \
-                                --urls=http://${DATABASE_HOST}:${DATABASE_PORT}

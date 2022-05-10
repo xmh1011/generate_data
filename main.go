@@ -4,18 +4,22 @@ import (
 	"fmt"
 	"generate_data/generate_data1"
 	"generate_data/generate_data2"
+	"generate_data/generate_data3"
 	"github.com/spf13/cobra"
 )
 
 func main() {
 	mainCmd := GetCommand()
-	
+
 	Generatedata1Cmd := generate_data1.Generatedata()
 	mainCmd.AddCommand(Generatedata1Cmd)
-	
+
 	Generatedata2Cmd := generate_data2.Generatedata()
 	mainCmd.AddCommand(Generatedata2Cmd)
-	
+
+	Generatedata3Cmd := generate_data3.Generatedata()
+	mainCmd.AddCommand(Generatedata3Cmd)
+
 	if err := mainCmd.Execute(); err != nil {
 		fmt.Printf("Error : %+v\n", err)
 	}

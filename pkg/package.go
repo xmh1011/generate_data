@@ -9,10 +9,11 @@ import (
 
 var deviceType = []string{"MEAC", "MFDA", "MFAE", "MRAT"}
 var deviceID = []int{1, 2, 3, 4, 5, 6, 7, 8}
-var equipmk = []string{"VALV", "METE", "WDbsq", "TMMT", "FLWM", "LNGT", "HBIERD", "YLbsq", "FLWM", "COPS", "CPFLDE", "GCA"}
+var equipmk = []string{"VALV", "METE"}
 var once = true
+var Measurement = []string{"air", "water", "pressure", "electric"}
 
-func randRange(left, right int) int {
+func RandRange(left, right int) int {
 	if once {
 		rand.Seed(time.Now().Unix())
 		once = false
@@ -28,18 +29,19 @@ func randValue(left, right float64) float64 {
 	return rand.Float64()*(right-left) + left
 }
 
-func OutputData(step, i, number int64) {
+func OutputData(measurement string, step, i, number int64) {
 	for k := 1; int64(k) <= number; k = k + 1 { // k为企业数
 		timestamp := 1e9 * i
 		timestamp_2 := 1e9 * (i - step/2)
-		j := randRange(0, 7)
-		fmt.Fprintf(os.Stdout, "air,device_type=%s,device_id=%d,system_code=%d,equipmk=%s,staid=%d_%d value_1=%f,value_2=%f,value_3=%f,value_4=%f,value_5=%f,value_6=%f,value_7=%f,value_8=%f,value_9=%f,value_10=%f,value_11=%f,value_12=%f,value_13=%f,value_14=%f,value_15=%f,value_16=%f,value_17=%f,value_18=%f,value_19=%f,value_20=%f,value_21=%f,value_22=%f,value_23=%f,value_24=%f,value_25=%f,value_26=%f,value_27=%f,value_28=%f %d\n",
-			deviceType[j/2],           // device_type
-			deviceID[j],               // device_id
-			k+1000000000,              // system_code 10位企业编号 共9000家企业
-			equipmk[randRange(0, 11)], // equipmk
-			randRange(1000, 1100),     // staid %d_%d
-			randRange(100000, 101000), // sataid %d_%d
+		j := RandRange(0, 7)
+		fmt.Fprintf(os.Stdout, "%s,device_type=%s,device_id=%d,system_code=%d,equipmk=%s value_1=%f,value_2=%f,value_3=%f,value_4=%f,value_5=%f,value_6=%f,value_7=%f,value_8=%f,value_9=%f,value_10=%f,value_11=%f,value_12=%f,value_13=%f,value_14=%f,value_15=%f,value_16=%f,value_17=%f,value_18=%f,value_19=%f,value_20=%f,value_21=%f,value_22=%f,value_23=%f,value_24=%f,value_25=%f,value_26=%f,value_27=%f,value_28=%f %d\n",
+			measurement,
+			deviceType[j/2],          // device_type 4
+			deviceID[j],              // device_id   8
+			k+1000000000,             // system_code 10位企业编号 共9000家企业 90
+			equipmk[RandRange(0, 1)], // equipmk 12
+			// randRange(1000, 1002),     // staid %d_%d 9
+			// randRange(100000, 100002), // sataid %d_%d
 			randValue(0.0, 1000000.0), // value_1
 			randValue(0.0, 1000000.0), // value_2
 			randValue(0.0, 1000000.0), // value_3
@@ -70,13 +72,14 @@ func OutputData(step, i, number int64) {
 			randValue(0.0, 1000000.0), // value_28
 			timestamp,                 // 时间戳
 		)
-		fmt.Fprintf(os.Stdout, "air,device_type=%s,device_id=%d,system_code=%d,equipmk=%s,staid=%d_%d value_1=%f,value_2=%f,value_3=%f,value_4=%f,value_5=%f,value_6=%f,value_7=%f,value_8=%f,value_9=%f,value_10=%f,value_11=%f,value_12=%f,value_13=%f,value_14=%f,value_15=%f,value_16=%f,value_17=%f,value_18=%f,value_19=%f,value_20=%f,value_21=%f,value_22=%f,value_23=%f,value_24=%f,value_25=%f,value_26=%f,value_27=%f,value_28=%f %d\n",
-			deviceType[j/2],           // device_type
-			deviceID[j],               // device_id
-			k+1000000000,              // system_code 10位企业编号 共9000家企业
-			equipmk[randRange(0, 11)], // equipmk
-			randRange(1000, 9000),     // staid %d_%d
-			randRange(100000, 900000), // sataid %d_%d
+		fmt.Fprintf(os.Stdout, "%s,device_type=%s,device_id=%d,system_code=%d,equipmk=%s value_1=%f,value_2=%f,value_3=%f,value_4=%f,value_5=%f,value_6=%f,value_7=%f,value_8=%f,value_9=%f,value_10=%f,value_11=%f,value_12=%f,value_13=%f,value_14=%f,value_15=%f,value_16=%f,value_17=%f,value_18=%f,value_19=%f,value_20=%f,value_21=%f,value_22=%f,value_23=%f,value_24=%f,value_25=%f,value_26=%f,value_27=%f,value_28=%f %d\n",
+			measurement,
+			deviceType[j/2],          // device_type
+			deviceID[j],              // device_id
+			k+1000000000,             // system_code 10位企业编号 共9000家企业
+			equipmk[RandRange(0, 1)], // equipmk 12
+			// randRange(1000, 1002),     // staid %d_%d 9
+			// randRange(100000, 100002), // sataid %d_%d
 			randValue(0.0, 1000000.0), // value_1
 			randValue(0.0, 1000000.0), // value_2
 			randValue(0.0, 1000000.0), // value_3
@@ -107,13 +110,14 @@ func OutputData(step, i, number int64) {
 			randValue(0.0, 1000000.0), // value_28
 			timestamp_2,               // 时间戳
 		)
-		fmt.Fprintf(os.Stdout, "water,device_type=%s,device_id=%d,system_code=%d,equipmk=%s,staid=%d_%d value_1=%f,value_2=%f,value_3=%f,value_4=%f,value_5=%f,value_6=%f,value_7=%f,value_8=%f %d\n",
-			deviceType[j/2], // device_type
-			deviceID[j],     // device_id
-			k+1000000000,    // system_code 10位企业编号 共9000家企业
-			equipmk[randRange(0, 11)],
-			randRange(1000, 9000),     // staid %d_%d
-			randRange(100000, 900000), // sataid %d_%d
+		fmt.Fprintf(os.Stdout, "%s,device_type=%s,device_id=%d,system_code=%d,equipmk=%s value_1=%f,value_2=%f,value_3=%f,value_4=%f,value_5=%f,value_6=%f,value_7=%f,value_8=%f %d\n",
+			measurement,
+			deviceType[j/2],          // device_type
+			deviceID[j],              // device_id
+			k+1000000000,             // system_code 10位企业编号 共9000家企业
+			equipmk[RandRange(0, 1)], // equipmk 12
+			// randRange(1000, 1002),     // staid %d_%d 9
+			// randRange(100000, 100002), // sataid %d_%d
 			randValue(0.0, 1000000.0), // value_1
 			randValue(0.0, 1000000.0), // value_2
 			randValue(0.0, 1000000.0), // value_3
@@ -124,13 +128,14 @@ func OutputData(step, i, number int64) {
 			randValue(0.0, 1000000.0), // value_8
 			timestamp,
 		)
-		fmt.Fprintf(os.Stdout, "pressure,device_type=%s,device_id=%d,system_code=%d,equipmk=%s,staid=%d_%d value_1=%f,value_2=%f,value_3=%f,value_4=%f,value_5=%f,value_6=%f,value_7=%f,value_8=%f %d\n",
-			deviceType[j/2], // device_type
-			deviceID[j],     // device_id
-			k+1000000000,    // system_code 10位企业编号 共9000家企业
-			equipmk[randRange(0, 11)],
-			randRange(1000, 9000),     // staid %d_%d
-			randRange(100000, 900000), // sataid %d_%d
+		fmt.Fprintf(os.Stdout, "%s,device_type=%s,device_id=%d,system_code=%d,equipmk=%s value_1=%f,value_2=%f,value_3=%f,value_4=%f,value_5=%f,value_6=%f,value_7=%f,value_8=%f %d\n",
+			measurement,
+			deviceType[j/2],          // device_type
+			deviceID[j],              // device_id
+			k+1000000000,             // system_code 10位企业编号 共9000家企业
+			equipmk[RandRange(0, 1)], // equipmk 12
+			// randRange(1000, 1002),     // staid %d_%d 9
+			// randRange(100000, 100002), // sataid %d_%d
 			randValue(0.0, 1000000.0), // value_1
 			randValue(0.0, 1000000.0), // value_2
 			randValue(0.0, 1000000.0), // value_3
@@ -141,13 +146,14 @@ func OutputData(step, i, number int64) {
 			randValue(0.0, 1000000.0), // value_8
 			timestamp,
 		)
-		fmt.Fprintf(os.Stdout, "electric,device_type=%s,device_id=%d,system_code=%d,equipmk=%s,staid=%d_%d value_1=%f,value_2=%f,value_3=%f,value_4=%f,value_5=%f,value_6=%f,value_7=%f,value_8=%f %d\n",
-			deviceType[j/2], // device_type
-			deviceID[j],     // device_id
-			k+1000000000,    // system_code 10位企业编号 共9000家企业
-			equipmk[randRange(0, 11)],
-			randRange(1000, 9000),     // staid %d_%d
-			randRange(100000, 900000), // sataid %d_%d
+		fmt.Fprintf(os.Stdout, "%s,device_type=%s,device_id=%d,system_code=%d,equipmk=%s value_1=%f,value_2=%f,value_3=%f,value_4=%f,value_5=%f,value_6=%f,value_7=%f,value_8=%f %d\n",
+			measurement,
+			deviceType[j/2],          // device_type
+			deviceID[j],              // device_id
+			k+1000000000,             // system_code 10位企业编号 共9000家企业
+			equipmk[RandRange(0, 1)], // equipmk 12
+			// randRange(1000, 1002),     // staid %d_%d 9
+			// randRange(100000, 100002), // sataid %d_%d
 			randValue(0.0, 1000000.0), // value_1
 			randValue(0.0, 1000000.0), // value_2
 			randValue(0.0, 1000000.0), // value_3
